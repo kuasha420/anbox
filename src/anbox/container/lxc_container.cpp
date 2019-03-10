@@ -42,9 +42,9 @@ namespace fs = boost::filesystem;
 namespace {
 constexpr unsigned int unprivileged_uid{100000};
 constexpr unsigned int android_system_uid{1000};
-constexpr const char *default_container_ip_address{"192.168.250.2"};
+constexpr const char *default_container_ip_address{"192.168.128.66"};
 constexpr const std::uint32_t default_container_ip_prefix_length{24};
-constexpr const char *default_host_ip_address{"192.168.250.1"};
+constexpr const char *default_host_ip_address{"192.168.128.64"};
 constexpr const char *default_dns_server{"8.8.8.8"};
 
 #ifdef ENABLE_LXC2_SUPPORT
@@ -137,14 +137,14 @@ void LxcContainer::setup_id_map() {
 }
 
 void LxcContainer::setup_network() {
-  if (!fs::exists("/sys/class/net/anbox0")) {
-    WARNING("Anbox bridge interface 'anbox0' doesn't exist. Network functionality will not be available");
+  if (!fs::exists("/sys/class/net/br0")) {
+    WARNING("Anbox bridge interface 'br0' doesn't exist. Network functionality will not be available");
     return;
   }
 
   set_config_item(lxc_config_net_type_key, "veth");
   set_config_item(lxc_config_net_flags_key, "up");
-  set_config_item(lxc_config_net_link_key, "anbox0");
+  set_config_item(lxc_config_net_link_key, "br0");
 
   // Instead of relying on DHCP we will give Android a static IP configuration
   // for the virtual ethernet interface LXC creates for us. This will be bridged
